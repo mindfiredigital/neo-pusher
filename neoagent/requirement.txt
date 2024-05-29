@@ -1,0 +1,5 @@
+langchain
+langchain_experimental
+langchain_openai
+pandas
+neo4j
