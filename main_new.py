@@ -156,7 +156,7 @@ if uploaded_files:
             # Read the file into a DataFrame
             data = pd.read_csv(file_path).head(5).to_string()
             dataframes.append(data)
-            file_paths.append(file_path)
+            file_paths.append("./"+file_path)
             st.sidebar.success(
                 f"File '{uploaded_file.name}' uploaded successfully! Saved to {file_path}")
         except Exception as e:
@@ -186,14 +186,16 @@ if file_links:
 if process_datas:
     data_s = ""
     for i, d in enumerate(dataframes):
-        data_s += ("data"+str(i+1) + " :" + d + "\n")
+        data_s += (  d  + "\n")
     print("================")
     print(data_s)
     print("=======================")
     print(len(file_paths), len(dataframes))
     print("==================")
+    print(file_paths,neo4j_username,neo4j_password,neo4j_url)
+    
     agent = NeoAgent(openai_api_key)
-    result = agent.run(path=file_path, username=neo4j_username,
+    result = agent.run(path=file_paths, username=neo4j_username,
                        password=neo4j_password, url=neo4j_url, data=data_s)
 
 # Display the data if available

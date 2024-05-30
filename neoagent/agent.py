@@ -56,7 +56,7 @@ class NeoAgent:
         Then write and execute the code that will push the data to neo4j db with proper label name and relationship.
         If you encounter error, rerun and solve it.
         Here's head of the csv files: {data}
-        Here's path: {path}
+        Here's paths: {path}
         Username of neo4j: {username}
         Password of neo4j: {password}
         URL of neo4j: {url}
@@ -65,6 +65,28 @@ class NeoAgent:
         - Do not miss any columns in the data
         - Before pushing data preprocess it to check for any data inconsistencies.
         - If you find any inconsistencies in data, preprocess it and clean it
+        - Multiple datasets and data can be given here's the example of data header sent to you
+        
+        Example head of csv files:
+        
+        dataset- 1
+
+        order_details_id  order_id       pizza_id  quantity
+        0                 1         1     hawaiian_m         1
+        1                 2         2  classic_dlx_m         1
+        2                 3         2  five_cheese_l         1
+        3                 4         2    ital_supr_l         1
+        4                 5         2     mexicana_m         1
+
+        dataset- 2
+
+            pizza_id pizza_type_id size  price
+        0   bbq_ckn_s       bbq_ckn    S  12.75
+        1   bbq_ckn_m       bbq_ckn    M  16.75
+        2   bbq_ckn_l       bbq_ckn    L  20.75
+        3  cali_ckn_s      cali_ckn    S  12.75
+        4  cali_ckn_m      cali_ckn    M  16.75
+
         """
         res = self.agent_executor.invoke({"input": prompt})
         return res["output"]
