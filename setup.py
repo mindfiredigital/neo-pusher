@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="neo-pusher",
-    version="0.1.0",
+    version="1.0.0",
     description="A package for Neo4j data ingestion using an AI agent.",
     author="Siddharth Choudhury",
     author_email="siddharthc@mindfiresolutions.com",
