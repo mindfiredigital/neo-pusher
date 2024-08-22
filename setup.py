@@ -1,6 +1,8 @@
 # setup.py
 
 from setuptools import setup, find_packages
+with open("readme.md", "r") as fh:
+    long_description = fh.read()
 
 setup(
     name="neo-pusher",
@@ -9,6 +11,8 @@ setup(
     author="Siddharth Choudhury",
     author_email="siddharthc@mindfiresolutions.com",
     packages=find_packages(),
+    long_description=long_description,
+    long_description_content_type="text/markdown",  # or "text/x-rst" if using reStructuredText
     install_requires=[
         "langchain",
         "langchain_experimental",
