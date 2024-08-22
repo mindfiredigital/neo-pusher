@@ -3,17 +3,18 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="neoagent",
+    name="neo-pusher",
     version="0.1.0",
     description="A package for Neo4j data ingestion using an AI agent.",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Siddharth Choudhury",
+    author_email="siddharthc@mindfiresolutions.com",
     packages=find_packages(),
     install_requires=[
         "langchain",
         "langchain_experimental",
         "langchain_openai",
         "pandas",
+        "neo4j"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
