@@ -8,8 +8,7 @@ on:
     types: [created]
 permissions:
   contents: write
-  id-token: write
-  actions: write
+  pull-requests: write
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
@@ -26,10 +25,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install setuptools-scm build twine
     - name: Python Semantic Release
+      id: semantic-release
       uses: python-semantic-release/python-semantic-release@v8.7.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create Pull Request
+      if: steps.semantic-release.outputs.released == 'true'
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "chore: release ${{ steps.semantic-release.outputs.version }}"
+        title: "Release ${{ steps.semantic-release.outputs.version }}"
+        body: "This PR was automatically generated to release version ${{ steps.semantic-release.outputs.version }}"
+        branch: "release-${{ steps.semantic-release.outputs.version }}"
+        base: "master"
     - name: Publish to PyPI
+      if: steps.semantic-release.outputs.released == 'true'
       env:
         PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
