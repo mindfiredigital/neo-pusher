@@ -40,7 +40,7 @@ jobs:
         pip install python-semantic-release setuptools-scm
     - name: Run semantic-release
       run: |
-        semantic-release publish
+        semantic-release publish --debug
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}  # Required for publishing to PyPI
