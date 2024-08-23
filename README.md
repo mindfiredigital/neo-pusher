@@ -18,7 +18,7 @@ Here's an example of how to use `neo-pusher` to push data from a CSV file to a N
 from neo_pusher.agent import NeoAgent
 
 # Initialize the NeoAgent with your OpenAI API key
-agent = NeoAgent(apikey="your_openai_api_key")
+agent = NeoAgent(apikey="your_openai_api_key",lang_chain_api_key="your_lang_chain_api_key")
 
 # Define the parameters for your Neo4j database and CSV file
 path = "path/to/your/csvfile.csv"
@@ -35,6 +35,7 @@ print(response)
 ### Parameters
 
 - `apikey` (str): Your OpenAI API key.
+- `langchain_api_key` (str): Your Langchain API key.
 - `model` (str): The OpenAI model to use. Defaults to `"gpt-4o"`.
 - `path` (str): The path to the CSV file.
 - `username` (str): The username for the Neo4j database.

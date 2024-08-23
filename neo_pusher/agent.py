@@ -22,15 +22,17 @@ class NeoAgent:
     You might know the answer without running any code, but you should still run the code to get the answer.
     If it does not seem like you can write code to answer the question, just return "I don't know" as the answer.
     """
-    base_prompt = hub.pull("langchain-ai/openai-functions-template")
-    prompt = base_prompt.partial(instructions=instructions)
 
-    def __init__(self, apikey, model="gpt-4o"):
+    def __init__(self, apikey: str, lang_chain_api_key: str, model: str = "gpt-4o"):
         '''
         Parameters:
         apikey (str): The OpenAI API key.
+        lang_chain_api_key (str): The langsmith API key.
         model (str): The OpenAI model to use. Defaults to "gpt-4o".
         '''
+        base_prompt = hub.pull(
+            "langchain-ai/openai-functions-template", api_key=lang_chain_api_key)
+        self.prompt = base_prompt.partial(instructions=self.instructions)
         agent = create_openai_functions_agent(
             ChatOpenAI(temperature=0, api_key=apikey,
                        model=model, verbose=True),
