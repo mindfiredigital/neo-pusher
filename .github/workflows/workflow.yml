@@ -18,7 +18,7 @@ permissions:
   contents: write
   id-token: write  # Required for semantic-release to create tags and releases
   actions: write  # Required for semantic-release to create tags and releases
-
+  # Fetch all history to ensure tags are available
 jobs:
   deploy:
 
@@ -26,6 +26,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
