@@ -1,55 +1,38 @@
-name: Upload Python Package
+name: Semantic Release
+
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
-  release:
-    types: [created]
-permissions:
-  contents: write
-  pull-requests: write
+  workflow_dispatch:
+
 jobs:
-  build-and-publish:
+  release:
     runs-on: ubuntu-latest
+    concurrency: release
+    permissions:
+      id-token: write
+      contents: write
+
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools-scm build twine
-    - name: Create and switch to release branch
-      run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git checkout -b release-candidate
+
     - name: Python Semantic Release
-      id: semantic-release
+      id: release
       uses: python-semantic-release/python-semantic-release@v8.7.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Push changes
-      run: git push origin release-candidate
-    - name: Create Pull Request
-      if: steps.semantic-release.outputs.version != ''
-      uses: peter-evans/create-pull-request@v5
+
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      # This step runs only if a new version was released
+      if: steps.release.outputs.released == 'true'
+
+    - name: Publish package to GitHub Releases
+      uses: python-semantic-release/python-semantic-release@v8.7.0
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: "chore: release ${{ steps.semantic-release.outputs.version }}"
-        title: "Release ${{ steps.semantic-release.outputs.version }}"
-        body: "This PR was automatically generated to release version ${{ steps.semantic-release.outputs.version }}"
-        branch: "release-candidate"
-        base: "master"
-    - name: Publish to PyPI
-      if: steps.semantic-release.outputs.version != ''
-      env:
-        PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-      run: |
-        python -m build
-        twine upload dist/*
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # This runs the publish step of semantic-release
+        additional_options: --noop || true
