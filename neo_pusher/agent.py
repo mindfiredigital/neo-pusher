@@ -32,6 +32,7 @@ class NeoAgent:
         '''
         base_prompt = hub.pull(
             "langchain-ai/openai-functions-template", api_key=lang_chain_api_key)
+        # print("hello")
         self.prompt = base_prompt.partial(instructions=self.instructions)
         agent = create_openai_functions_agent(
             ChatOpenAI(temperature=0, api_key=apikey,
