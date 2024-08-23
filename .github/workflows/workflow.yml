@@ -14,7 +14,7 @@ permissions:
   actions: write
 
 jobs:
-  deploy:
+  install-dependencies:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -28,12 +28,25 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install python-semantic-release setuptools-scm
+
+  semantic-release:
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    permissions:
+      contents: write
+      id-token: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        persist-credentials: false
     - name: Run semantic-release
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
         semantic-release version
-        semantic-release publish --create-release github
+        semantic-release publish
