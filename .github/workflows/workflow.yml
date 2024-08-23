@@ -15,7 +15,7 @@ on:
       - master
 
 permissions:
-  contents: read
+  contents: write
   id-token: write  # Required for semantic-release to create tags and releases
   actions: write  # Required for semantic-release to create tags and releases
 
