@@ -40,7 +40,7 @@ jobs:
 
     - name: Create and push to release branch
       run: |
-        git checkout -b release
+        git checkout -b release || git checkout release
         git push origin release
 
     - name: Run semantic-release to create tag and release
@@ -48,10 +48,10 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        # Ensure we are on the release branch
+        # Run semantic-release on the release branch
         git checkout release
-        # Run semantic-release
-        semantic-release publish --no-ci --no-verify --branch release
+        semantic-release version
+        semantic-release publish
 
     - name: Build package
       run: python -m build
