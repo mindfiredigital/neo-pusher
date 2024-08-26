@@ -12,7 +12,6 @@ permissions:
   actions: write
   packages: write
   pull-requests: write
-  
 
 jobs:
   release-and-publish:
@@ -38,11 +37,23 @@ jobs:
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
+    - name: Generate new version
+      id: new_version
+      run: |
+        version=$(python -c "from setuptools_scm import get_version; print(get_version())")
+        new_version=$(echo $version | sed 's/\(.*\)+g\(.*\)/\1.dev\2/')
+        echo "new_version=$new_version" >> $GITHUB_ENV
+
+    - name: Print new version
+      run: echo "New version: ${{ env.new_version }}"
+
     - name: Run semantic-release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION=${{ env.new_version }}
       run: |
-        semantic-release publish
+        echo "Using version $VERSION"
+        semantic-release publish --version=$VERSION
 
     - name: Build package
       run: python -m build
