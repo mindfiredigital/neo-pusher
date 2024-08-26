@@ -6,13 +6,6 @@ on:
       - master
   workflow_dispatch:
 
-permissions:
-  contents: write
-  id-token: write
-  actions: write
-  packages: write
-  pull-requests: write
-
 jobs:
   release-and-publish:
     runs-on: ubuntu-latest
@@ -31,31 +24,18 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build twine setuptools_scm python-semantic-release
-
-    - name: Create and push to release branch
-      run: |
-        git checkout -b release || git checkout release
-        git push origin release
+        pip install build twine python-semantic-release
 
     - name: Run semantic-release to create tag and release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git checkout release
-        semantic-release publish
+      run: semantic-release publish
 
     - name: Build package
       run: python -m build
-
-    - name: Verify version
-      run: |
-        python setup.py --version
 
     - name: Publish package to PyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: |
-        twine check dist/*
-        twine upload dist/*
+      run: twine upload dist/*
