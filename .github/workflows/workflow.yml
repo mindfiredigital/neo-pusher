@@ -15,6 +15,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        fetch-tags: true  # Ensure all tags are fetched
 
     - name: Set up Python
       uses: actions/setup-python@v3
@@ -30,6 +31,9 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: semantic-release publish
+
+    - name: Fetch latest tags
+      run: git fetch --tags
 
     - name: Build package
       run: python -m build
