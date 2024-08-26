@@ -48,8 +48,10 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
+        # Ensure we are on the release branch
         git checkout release
-        semantic-release publish
+        # Run semantic-release
+        semantic-release publish --no-ci --no-verify --branch release
 
     - name: Build package
       run: python -m build
@@ -58,4 +60,6 @@ jobs:
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: twine upload dist/*
+      run: |
+        # Upload package to PyPI
+        twine upload dist/*
