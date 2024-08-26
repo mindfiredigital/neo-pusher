@@ -55,6 +55,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine setuptools_scm python-semantic-release
 
+    - name: Clean up previous builds
+      run: |
+        rm -rf dist/ build/ *.egg-info
+
     - name: Run python-semantic-release
       env:
         PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
