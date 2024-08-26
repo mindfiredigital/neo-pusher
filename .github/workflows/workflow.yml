@@ -45,7 +45,6 @@ jobs:
         echo "new_version=$new_version" >> $GITHUB_ENV
 
     - name: Print new version
-      run: echo "New version: ${{ env.new_version }}"
 
     - name: Run semantic-release
       env:
