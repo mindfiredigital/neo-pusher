@@ -1,4 +1,4 @@
-name: Create Release and Publish Package
+name: Release and Publish Package
 
 on:
   push:
@@ -16,8 +16,9 @@ permissions:
 jobs:
   release-and-publish:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
+    - name: Checkout master branch
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
@@ -37,21 +38,17 @@ jobs:
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-    - name: Generate new version
-      id: new_version
+    - name: Create and push to release branch
       run: |
-        version=$(python -c "from setuptools_scm import get_version; print(get_version())")
-        new_version=$(echo $version | sed 's/\(.*\)+g\(.*\)/\1.dev\2/')
-        echo "new_version=$new_version" >> $GITHUB_ENV
+        git checkout -b release
+        git push origin release
 
-    - name: Print new version
-      run: echo "New version: ${{ env.new_version }}"
-
-    - name: Run semantic-release
+    - name: Run semantic-release to create tag and release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        echo "Using version ${{ env.new_version }}"
+        git checkout release
         semantic-release publish
 
     - name: Build package
@@ -62,13 +59,3 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: twine upload dist/*
-
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: 'chore(release): prepare release'
-        title: 'chore(release): prepare release'
-        body: 'This PR is auto-generated to merge the release changes back to the master branch.'
-        branch: release-${{ github.sha }}
-        base: master
