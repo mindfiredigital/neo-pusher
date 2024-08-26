@@ -37,19 +37,12 @@ jobs:
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-    - name: Create and switch to release branch
-      run: |
-        git checkout -b release-${{ github.run_number }}
-        git push -u origin release-${{ github.run_number }}
-
     - name: Run semantic-release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         semantic-release version
-        VERSION=$(semantic-release print-version)
-        echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-        git push --follow-tags origin release-${{ github.run_number }}
+        semantic-release publish
 
     - name: Build package
       run: python -m build
@@ -58,17 +51,12 @@ jobs:
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: |
-        # Ensure version in setup.py matches the released version
-        sed -i "s/version=.*,/version='${{ env.RELEASE_VERSION }}',/" setup.py
-        twine upload dist/*
+      run: twine upload dist/*
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: 'chore(release): prepare release ${{ env.RELEASE_VERSION }}'
-        title: 'chore(release): prepare release ${{ env.RELEASE_VERSION }}'
+        commit-message: 'chore(release): prepare release'
+        title: 'chore(release): prepare release'
         body: 'This PR is auto-generated to merge the release changes back to master.'
-        branch: release-${{ github.run_number }}
-        base: master
