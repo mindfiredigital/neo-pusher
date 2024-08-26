@@ -21,7 +21,8 @@ setup(
         "langchain_openai",
         "pandas",
         "neo4j"
-    ],
+    ],  
+    
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
