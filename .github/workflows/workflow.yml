@@ -52,7 +52,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "Using version ${{ env.new_version }}"
-        semantic-release publish --version="${{ env.new_version }}"
+        semantic-release publish
 
     - name: Build package
       run: python -m build
