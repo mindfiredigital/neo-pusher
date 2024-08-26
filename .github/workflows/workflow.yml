@@ -41,7 +41,6 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        semantic-release version
         semantic-release publish
 
     - name: Build package
@@ -59,4 +58,6 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: 'chore(release): prepare release'
         title: 'chore(release): prepare release'
-        body: 'This PR is auto-generated to merge the release changes back to master.'
+        body: 'This PR is auto-generated to merge the release changes back to the master branch.'
+        branch: release-${{ github.sha }}
+        base: master
