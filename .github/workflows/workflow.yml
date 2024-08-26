@@ -47,6 +47,8 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         semantic-release version
+        VERSION=$(semantic-release print-version)
+        echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
         git push --follow-tags origin release-${{ github.run_number }}
 
     - name: Build package
@@ -56,14 +58,17 @@ jobs:
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: twine upload dist/*
+      run: |
+        # Ensure version in setup.py matches the released version
+        sed -i "s/version=.*,/version='${{ env.RELEASE_VERSION }}',/" setup.py
+        twine upload dist/*
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: 'chore(release): prepare release'
-        title: 'chore(release): prepare release'
+        commit-message: 'chore(release): prepare release ${{ env.RELEASE_VERSION }}'
+        title: 'chore(release): prepare release ${{ env.RELEASE_VERSION }}'
         body: 'This PR is auto-generated to merge the release changes back to master.'
         branch: release-${{ github.run_number }}
         base: master
