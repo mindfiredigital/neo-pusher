@@ -1,75 +1,46 @@
-name: Semantic Release
+name: Upload Python Package
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
-  workflow_dispatch:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+  id-token: write
+  actions: write
+  packages: write
 
 jobs:
-  release:
+  deploy:
     runs-on: ubuntu-latest
-    concurrency: release
-    permissions:
-      id-token: write
-      contents: write
-      pull-requests: write
-
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v3
       with:
         python-version: '3.x'
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install python-semantic-release
-
-    - name: Create release branch
+        pip install build twine python-semantic-release setuptools-scm
+    - name: Run semantic-release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git checkout -b release-please
-
-    - name: Python Semantic Release
-      id: release
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
         semantic-release version
-        NEW_VERSION=$(semantic-release print-version --current)
-        echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
-
-    - name: Create Pull Request
-      if: steps.release.outputs.new_version != ''
-      uses: peter-evans/create-pull-request@v5
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: "chore: release ${{ steps.release.outputs.new_version }}"
-        title: "Release ${{ steps.release.outputs.new_version }}"
-        body: |
-          This PR was created by the Semantic Release action. Please review and merge to release version ${{ steps.release.outputs.new_version }}.
-          
-          Once merged, the release will be automatically published to PyPI and a GitHub release will be created.
-        branch: release-please
-        base: master
-
-    - name: Publish to PyPI
-      if: steps.release.outputs.new_version != '' && github.event_name == 'push' && github.ref == 'refs/heads/master'
-      env:
-        PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-      run: |
-        python -m build
-        twine upload dist/* -u __token__ -p $PYPI_TOKEN
-
-    - name: Create GitHub Release
-      if: steps.release.outputs.new_version != '' && github.event_name == 'push' && github.ref == 'refs/heads/master'
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
         semantic-release publish
+    - name: Build package
+      run: python -m build
+    - name: Publish package to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: twine upload dist/*
