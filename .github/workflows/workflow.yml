@@ -29,16 +29,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine setuptools_scm python-semantic-release
 
+    - name: Clean previous builds
+      run: |
+        rm -rf dist/*
+
     - name: Run semantic-release
+      id: semantic_release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        semantic-release publish
-
-    - name: Clean previous builds
-      run: |
-        rm -rf dist/*
+        semantic-release publish || exit 1
 
     - name: Build package
       run: |
