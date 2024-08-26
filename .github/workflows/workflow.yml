@@ -1,4 +1,4 @@
-name: Release and Publish Package
+name: Retrieve and Use Local Version
 
 on:
   push:
@@ -15,7 +15,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
-        fetch-tags: true  # Ensure all tags are fetched
 
     - name: Set up Python
       uses: actions/setup-python@v3
@@ -25,21 +24,29 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build twine python-semantic-release
+        pip install build twine setuptools_scm
 
-    - name: Run semantic-release to create tag and release
+    - name: Extract version
+      id: extract_version
+      run: |
+        VERSION=$(python setup.py --version)
+        CLEAN_VERSION=$(echo $VERSION | sed 's/+.*//')
+        echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_ENV
+        echo "Extracted version: $CLEAN_VERSION"
+
+    - name: Run semantic-release (optional)
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: semantic-release publish
-
-    - name: Fetch latest tags
-      run: git fetch --tags
+      run: |
+        echo "Running semantic-release with version ${{ env.CLEAN_VERSION }}"
 
     - name: Build package
-      run: python -m build
+      run: |
+        python -m build
 
     - name: Publish package to PyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: twine upload dist/*
+      run: |
+        twine upload dist/*
