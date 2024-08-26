@@ -50,10 +50,9 @@ jobs:
     - name: Run semantic-release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VERSION=${{ env.new_version }}
       run: |
-        echo "Using version $VERSION"
-        semantic-release publish --version=$VERSION
+        echo "Using version ${{ env.new_version }}"
+        semantic-release publish --version="${{ env.new_version }}"
 
     - name: Build package
       run: python -m build
