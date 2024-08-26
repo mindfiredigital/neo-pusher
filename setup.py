@@ -1,21 +1,15 @@
-# setup.py
-
 from setuptools import setup, find_packages
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
 setup(
-    name="neo-pusher",  # Your package name
-    use_scm_version=True,  # Use setuptools-scm to handle versioning
-    setup_requires=["setuptools>=42", "setuptools-scm"],  # Use attr to get the version from your package
+    name="neo-pusher",
+    version="0.0.0",  # Placeholder, will be replaced by semantic-release
     description="A package for Neo4j data ingestion using an AI agent.",
     author="Siddharth Choudhury",
     author_email="siddharthc@mindfiresolutions.com",
-    packages=find_packages(where="."),  # Specifies that packages are in the root directory
-    package_dir={"": "."},  # Root directory is the package directory
+    packages=find_packages(where="."),
+    package_dir={"": "."},
     long_description=long_description,
-    long_description_content_type="text/markdown",  # or "text/x-rst" if using reStructuredText
+    long_description_content_type="text/markdown",
     install_requires=[
         "langchain",
         "langchain_experimental",
