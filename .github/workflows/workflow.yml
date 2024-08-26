@@ -46,12 +46,19 @@ jobs:
     - name: Run semantic-release to create tag and release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        # Run semantic-release on the release branch
+        # Ensure we are on the release branch
         git checkout release
+        # Run semantic-release
         semantic-release version
         semantic-release publish
+
+    - name: Remove local version information
+      run: |
+        VERSION=$(python setup.py --version)
+        CLEAN_VERSION=$(echo $VERSION | sed 's/+.*//')
+        echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_ENV
+        python setup.py egg_info --tag-build=".dev${GITHUB_RUN_NUMBER}"
 
     - name: Build package
       run: python -m build
