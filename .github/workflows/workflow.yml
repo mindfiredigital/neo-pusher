@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - release
   workflow_dispatch:
 
 permissions:
@@ -15,7 +14,6 @@ permissions:
 
 jobs:
   push-to-release:
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
 
     steps:
@@ -37,7 +35,8 @@ jobs:
         git push origin release
 
   release-and-publish:
-    if: github.ref == 'refs/heads/release'
+    needs: push-to-release
+    if: always()  # Ensures that the job runs after the push-to-release job
     runs-on: ubuntu-latest
 
     steps:
