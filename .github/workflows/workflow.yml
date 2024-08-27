@@ -38,13 +38,16 @@ jobs:
         git checkout -b release origin/release || git checkout release
         git merge master
 
-    - name: Run semantic-release
+    - name: Run semantic-release and capture version
+      id: semantic_version
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PYPI_USERNAME: __token__
         PYPI_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        semantic-release publish
+        VERSION=$(semantic-release version | grep -oP "(?<=version: )[^\s]+")
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "Semantic version: $VERSION"
 
     - name: Push changes to release branch
       env:
@@ -52,9 +55,16 @@ jobs:
       run: |
         git push origin release --tags
 
-    - name: Build package
+    - name: Build package with captured version
       run: |
-        python -m build
+        python setup.py sdist bdist_wheel
+
+    - name: Rename dist files with semantic version
+      run: |
+        for file in dist/*; do
+          mv "$file" "${file/.tar.gz/-$VERSION.tar.gz}"
+          mv "$file" "${file/.whl/-$VERSION.whl}"
+        done
 
     - name: Publish package to PyPI
       env:
