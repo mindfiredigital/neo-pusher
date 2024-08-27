@@ -26,7 +26,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine setuptools_scm python-semantic-release
 
-    - name: Run semantic-release to determine version
+    - name: Run semantic-release to determine version and create tag
       id: determine_version
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -34,6 +34,8 @@ jobs:
         VERSION=$(semantic-release version)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "Determined version: $VERSION"
+        git tag $VERSION
+        git push origin $VERSION
 
     - name: Build package with semantic version
       run: |
