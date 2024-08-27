@@ -6,6 +6,12 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  contents: write
+  id-token: write
+  actions: write
+  packages: write
+
 jobs:
   release-and-publish:
     runs-on: ubuntu-latest
@@ -41,6 +47,8 @@ jobs:
         semantic-release publish
 
     - name: Push changes to release branch
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: |
         git push origin release --tags
 
