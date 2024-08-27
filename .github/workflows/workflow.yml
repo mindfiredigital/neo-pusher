@@ -26,7 +26,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine setuptools_scm python-semantic-release
 
-    - name: Checkout release branch
+    - name: Checkout or create release branch
       run: |
         git fetch origin
         git checkout -b release origin/release || git checkout release
@@ -38,7 +38,7 @@ jobs:
         PYPI_USERNAME: __token__
         PYPI_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        semantic-release publish --branch release
+        semantic-release publish
 
     - name: Push changes to release branch
       run: |
