@@ -5,7 +5,7 @@ on:
     branches:
       - master
   workflow_dispatch:
-  
+
 permissions:
   contents: write
   id-token: write
@@ -37,16 +37,28 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.FOSS_GITHUB_TOKEN }}
       run: |
-        VERSION=$(semantic-release version)
+        VERSION=$(semantic-release version --noop)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "Determined version: $VERSION"
 
     - name: Create and push Git tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.FOSS_GITHUB_TOKEN }}
       run: |
         git config user.name "lakinmindfire"
-        git config user.email "lakinm@mindfiresolutions.com"
-        git tag $VERSION
-        git push origin $VERSION
+        git config user.email "lakin.mohapatra@mindfiresolutions.com"
+        git tag ${{ env.VERSION }}
+        git push origin ${{ env.VERSION }}
+
+    - name: Push changes to master using a personal access token
+      env:
+        GITHUB_TOKEN: ${{ secrets.FOSS_GITHUB_TOKEN }}  # Use the PAT from a user with permissions
+      run: |
+        git config user.name "lakinmindfire"
+        git config user.email "lakin.mohapatra@mindfiresolutions.com"
+        git checkout master
+        git merge ${{ env.VERSION }} --no-ff
+        git push origin master
 
     - name: Build package with semantic version
       run: |
@@ -55,8 +67,8 @@ jobs:
     - name: Rename dist files with semantic version
       run: |
         for file in dist/*; do
-          mv "$file" "${file/.tar.gz/-$VERSION.tar.gz}"
-          mv "$file" "${file/.whl/-$VERSION.whl}"
+          mv "$file" "${file/.tar.gz/-${{ env.VERSION }}.tar.gz}"
+          mv "$file" "${file/.whl/-${{ env.VERSION }}.whl}"
         done
 
     - name: Publish package to PyPI
