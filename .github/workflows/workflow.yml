@@ -35,7 +35,7 @@ jobs:
     - name: Run semantic-release to determine version
       id: determine_version
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.FOSS_GITHUB_TOKEN }}
       run: |
         VERSION=$(semantic-release version)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
