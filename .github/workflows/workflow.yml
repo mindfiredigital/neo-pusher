@@ -1,5 +1,4 @@
-
-name: Retrieve and Use Local Version
+name: Release Workflow
 
 on:
   push:
@@ -25,21 +24,25 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build twine setuptools_scm
+        pip install build twine setuptools_scm python-semantic-release
 
-    - name: Extract version
-      id: extract_version
+    - name: Checkout release branch
       run: |
-        VERSION=$(python setup.py --version)
-        CLEAN_VERSION=$(echo $VERSION | sed 's/+.*//')
-        echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_ENV
-        echo "Extracted version: $CLEAN_VERSION"
+        git fetch origin
+        git checkout -b release origin/release || git checkout release
+        git merge master
 
-    - name: Run semantic-release (optional)
+    - name: Run semantic-release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PYPI_USERNAME: __token__
+        PYPI_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        echo "Running semantic-release with version ${{ env.CLEAN_VERSION }}"
+        semantic-release publish --branch release
+
+    - name: Push changes to release branch
+      run: |
+        git push origin release --tags
 
     - name: Build package
       run: |
