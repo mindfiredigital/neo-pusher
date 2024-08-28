@@ -39,6 +39,7 @@ class GetLink:
         tuple: A string representation of the first 5 rows of the DataFrame and the formatted link.
         '''
         file_id = GetLink.get_google_drive_file_id(link)
+        #print("file ids")
         if file_id:
             formatted_link = f"https://drive.google.com/uc?export=download&id={file_id}"
             try:
