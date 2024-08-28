@@ -20,7 +20,7 @@ Here are some ways you can contribute to the project:
 4. **Make changes** and **test** to ensure they work as expected.
 5. **Commit** your changes: `git commit -m 'Your descriptive commit message'`.
 6. **Push** your branch to your GitHub repository: `git push origin feature-name`.
-7. Create a **Pull Request (PR)** from your branch to the original repository's `main` or `master` branch.
+7. Create a **Pull Request (PR)** from your branch to the original repository's `master` branch.
 
 ## Pull Request Guidelines
 
