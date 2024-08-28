@@ -17,6 +17,7 @@ To install `neo-pusher`, use pip:
 pip install neo-pusher
 ```
 
+
 ## Usage
 
 Here's an example of how to use `neo-pusher` to push data from a CSV file to a Neo4j database:
