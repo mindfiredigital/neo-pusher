@@ -9,6 +9,13 @@
 - **Error Handling and Debugging**: The agent reruns and debugs code automatically if any errors are encountered during the process.
 - **Multiple Dataset Support**: Capable of handling multiple datasets simultaneously, ensuring that all columns are properly represented in the database.
 
+## Installation
+
+To install `neo-pusher`, use pip:
+
+```bash
+pip install neo-pusher
+```
 
 ## Usage
 
