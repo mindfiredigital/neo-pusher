@@ -7,7 +7,8 @@ with open("README.md", "r") as fh:
 setup(
     name="neo-pusher",  # Your package name 
     #use_scm_version=True,  # Use setuptools-scm to handle versioning
-    use_scm_version={"local_scheme": "no-local-version"}, 
+    version = "1.1.1",
+    # use_scm_version={"local_scheme": "no-local-version"}, 
    
 # Avoid using local versions
     setup_requires=["setuptools>=42", "setuptools-scm"],  # Use attr to get the version from your package
