@@ -12,7 +12,7 @@ setup(
 # Avoid using local versions
     setup_requires=["setuptools>=42", "setuptools-scm"],  # Use attr to get the version from your package
     description="A package for Neo4j data ingestion using an AI agent.",
-    author="Siddharth Choudhury",
+    author="Mindfire Digital LLP",
     author_email="siddharthc@mindfiresolutions.com",
     packages=find_packages(where="."),  # Specifies that packages are in the root directory
     package_dir={"": "."},  # Root directory is the package directory
