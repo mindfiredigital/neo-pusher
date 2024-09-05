@@ -56,7 +56,7 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: twine upload dist/*
-    
+
     - name: Raise PR from main to master
       uses: peter-evans/create-pull-request@v5
       with:
@@ -64,6 +64,4 @@ jobs:
         head: main
         title: 'Release PR: main -> master'
         body: 'This PR merges the changes from the main branch back into master after the release.'
-        branch: pr-main-to-master  
-
-  
+        branch: pr-main-to-master

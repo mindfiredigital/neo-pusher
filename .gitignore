@@ -10,3 +10,4 @@ build
 dist
 neo_pusher.egg-info
 neoagent/__pycache__
+venv

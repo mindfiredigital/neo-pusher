@@ -78,4 +78,4 @@ The following is an example of the CSV file headers that `neo-pusher` can proces
 - The agent uses the `neo4j` Python package to connect to and push data into the Neo4j database.
 - Before pushing data, the agent checks for any inconsistencies and cleans the data accordingly.
 
-[Downloads](https://pepy.tech/project/neo-pusher)  
+[Downloads](https://pepy.tech/project/neo-pusher)

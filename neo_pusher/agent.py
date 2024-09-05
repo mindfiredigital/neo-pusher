@@ -11,7 +11,8 @@ from langchain_experimental.tools import PythonREPLTool
 
 
 class NeoAgent:
-    '''Neo4j data pusher '''
+    """Neo4j data pusher"""
+
     tools = [PythonREPLTool()]
     instructions = """You are an agent designed to write
     and execute python code to answer questions.
@@ -24,25 +25,28 @@ class NeoAgent:
     """
 
     def __init__(self, apikey: str, lang_chain_api_key: str, model: str = "gpt-4o"):
-        '''
+        """
         Parameters:
         apikey (str): The OpenAI API key.
         lang_chain_api_key (str): The langsmith API key.
         model (str): The OpenAI model to use. Defaults to "gpt-4o".
-        '''
+        """
         base_prompt = hub.pull(
-            "langchain-ai/openai-functions-template", api_key=lang_chain_api_key)
+            "langchain-ai/openai-functions-template", api_key=lang_chain_api_key
+        )
         # print("hello")
         self.prompt = base_prompt.partial(instructions=self.instructions)
         agent = create_openai_functions_agent(
-            ChatOpenAI(temperature=0, api_key=apikey,
-                       model=model, verbose=True),
-            self.tools, self.prompt)
+            ChatOpenAI(temperature=0, api_key=apikey, model=model, verbose=True),
+            self.tools,
+            self.prompt,
+        )
         self.agent_executor = AgentExecutor(
-            agent=agent, tools=self.tools, verbose=True, handle_parsing_errors=True)
+            agent=agent, tools=self.tools, verbose=True, handle_parsing_errors=True
+        )
 
     def run(self, path, username, password, url, data=None):
-        '''
+        """
         Parameters:
         path (str): The path to the CSV file.
         username (str): The username for the Neo4j database.
@@ -53,7 +57,7 @@ class NeoAgent:
         Returns:
         response from LLM
 
-        '''
+        """
         prompt = f"""
         You are given head of the csv files. Your work is to study the head of the csv files and generate neo4j schema.
         Then write and execute the code that will push the data to neo4j db with proper label name and relationship.
@@ -69,9 +73,9 @@ class NeoAgent:
         - Before pushing data preprocess it to check for any data inconsistencies.
         - If you find any inconsistencies in data, preprocess it and clean it
         - Multiple datasets and data can be given here's the example of data header sent to you
-        
+
         Example head of csv files:
-        
+
         dataset- 1
 
         order_details_id  order_id       pizza_id  quantity
@@ -92,5 +96,5 @@ class NeoAgent:
 
         """
         res = self.agent_executor.invoke({"input": prompt})
-        #print("res")
+        # print("res")
         return res["output"]
